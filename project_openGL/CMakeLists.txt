@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 2.6)
 project(Project_OpenGL)
  
-include_directories(include)
-#link_directories(Lib)
+include_directories(Include)
+#link_directories(Lib/Windows)
 
-#link_libraries(glfw3)
+#find_library(RESULT glfw3)
 
 set(GRAPH_SOURCES Src/glad.cpp)
 set(MAIN_SOURCES Src/tutorial1.cpp)

@@ -1,5 +1,5 @@
-#include <glad\glad.h>
-#include <GLFW\glfw3.h>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 #include <iostream>
 
@@ -14,8 +14,8 @@ int main()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// Create a 800 * 600 window
-	GLFWwindow *window = glfwCreateWindow(800, 600, "LearnGL", nullptr, nullptr);
-	if (window == nullptr)
+	GLFWwindow *window = glfwCreateWindow(800, 600, "LearnGL", NULL, NULL);
+	if (window == NULL)
 	{
 		std::cout << " Create window failed \n";
 		glfwTerminate();
