@@ -1,8 +1,0 @@
-﻿  Checking Build System
-  CMake is re-running because D:/OpenGL_learn/project_openGL/build/CMakeFiles/generate.stamp is out-of-date.
-    the file 'D:/OpenGL_learn/project_openGL/CMakeLists.txt'
-    is newer than 'D:/OpenGL_learn/project_openGL/build/CMakeFiles/generate.stamp.depend'
-    result='-1'
-  -- Configuring done
-  -- Generating done
-  -- Build files have been written to: D:/OpenGL_learn/project_openGL/build
