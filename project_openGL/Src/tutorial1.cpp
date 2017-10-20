@@ -16,6 +16,16 @@ GLuint CreateVBO(const std::vector<float> &init_data)
 	return VBO;
 }
 
+GLuint CreateEBO(const std::vector<unsigned int> &init_data)
+{
+	GLuint EBO;
+	glGenBuffers(1, &EBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, init_data.size() * sizeof(unsigned int), init_data.data(), GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	return EBO;
+}
+
 
 GLuint CreateProgram(const std::string &vs_data, const std::string &fs_data)
 {
@@ -88,7 +98,7 @@ void ProcessInput(GLFWwindow* window)
 	}
 }
 
-GLuint CreateVAO(GLuint VBO)
+GLuint CreateVAO(GLuint VBO, GLuint EBO)
 {
 	GLuint VAO;
 	glGenVertexArrays(1, &VAO);
@@ -96,6 +106,7 @@ GLuint CreateVAO(GLuint VBO)
 	glBindVertexArray(VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
@@ -144,16 +155,23 @@ int main()
 
 	// Setup triangle vertice
 	std::vector<float> vertices = {
-		-0.5f, -0.5f, 0.0f, // left  
-		0.5f, -0.5f, 0.0f, // right 
-		0.0f,  0.5f, 0.0f  // top   
+		0.5f,  0.5f, 0.0f,  // top right
+		0.5f, -0.5f, 0.0f,  // bottom right
+		-0.5f, -0.5f, 0.0f,  // bottom left
+		-0.5f,  0.5f, 0.0f   // top left   
+	};
+
+	// Setup indices
+	std::vector<unsigned int> indices =
+	{
+		0, 1, 3,  // first Triangle
+		1, 2, 3   // second Triangle
 	};
 
 
-
-
 	GLuint triangle_VBO = CreateVBO(vertices);
-	GLuint VAO = CreateVAO(triangle_VBO);
+	GLuint EBO = CreateEBO(indices);
+	GLuint VAO = CreateVAO(triangle_VBO, EBO);
 
 	const std::string vs_shader = 
 		"#version 330 core\n"
@@ -190,7 +208,7 @@ int main()
 		// Draw call
 		glUseProgram(shader_program);
 		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 
 		glfwSwapBuffers(window);
