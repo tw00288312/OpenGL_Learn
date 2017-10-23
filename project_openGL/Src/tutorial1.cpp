@@ -4,6 +4,8 @@
 #include <iostream>
 #include <vector>
 
+#include "glCommonClass.h"
+
 /* General comman function */
 
 GLuint CreateVBO(const std::vector<float> &init_data)
@@ -26,67 +28,6 @@ GLuint CreateEBO(const std::vector<unsigned int> &init_data)
 	return EBO;
 }
 
-
-GLuint CreateProgram(const std::string &vs_data, const std::string &fs_data)
-{
-
-	bool any_error = false;
-
-	GLuint vertex_shader, fragment_shader;
-
-	// String to c-string
-	const char* vs_csring = vs_data.c_str();
-	const char* fs_csring = fs_data.c_str();
-
-
-	// Create and compile vertex shader
-	vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertex_shader, 1, &vs_csring, NULL);
-	glCompileShader(vertex_shader);
-
-	// Create and compile fragment shader
-	fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragment_shader, 1, &fs_csring, NULL);
-	glCompileShader(fragment_shader);
-
-	// check for shader compile errors
-	int success;
-	char infoLog[512];
-	glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		glGetShaderInfoLog(vertex_shader, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-
-		any_error = true;
-	}
-
-	glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		glGetShaderInfoLog(fragment_shader, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-
-		any_error = true;
-	}
-	
-	GLuint program;
-	program = glCreateProgram();
-	glAttachShader(program, vertex_shader);
-	glAttachShader(program, fragment_shader);
-	glLinkProgram(program);
-	if (!success) {
-		glGetProgramInfoLog(program, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
-
-		any_error = true;
-	}
-	glDeleteShader(vertex_shader);
-	glDeleteShader(fragment_shader);
-
-	return any_error ? 0 : program;
-
-}
 
 
 /*	Programe specific function */
@@ -173,30 +114,8 @@ int main()
 	GLuint EBO = CreateEBO(indices);
 	GLuint VAO = CreateVAO(triangle_VBO, EBO);
 
-	const std::string vs_shader = 
-		"#version 330 core\n"
-		"layout (location = 0) in vec3 aPos;\n"
-		"void main()\n"
-		"{\n"
-		"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-		"}\n\0"; 
-
-	const std::string fs_shader = 
-		"#version 330 core\n"
-		"out vec4 FragColor;\n"
-		"void main()\n"
-		"{\n"
-		"   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-		"}\n\0";
-
-	GLuint shader_program = CreateProgram(vs_shader, fs_shader);
-
-	if (shader_program == 0)
-	{
-		glfwTerminate();
-		return -1;
-	}
-
+	ShaderProgram program("D:\\OpenGL_learn\\project_openGL\\Src\\Shader\\vertex_shader.vs", "D:\\OpenGL_learn\\project_openGL\\Src\\Shader\\fragment_shader.fs");
+	
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -206,7 +125,7 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		// Draw call
-		glUseProgram(shader_program);
+		program.use();
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
